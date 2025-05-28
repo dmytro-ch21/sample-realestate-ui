@@ -5,7 +5,7 @@ import Home from '../pages/home/Home.jsx';
 import Landing from '../pages/landing/Landing.jsx';
 import Listing from '../pages/listing/Listing.jsx';
 import Wishlist from '../pages/wishlist/Wishlist.jsx'
-import Profile from '../pages/profile/Profile.jsx'
+import Profile from '../pages/profile/index.jsx'
 import Registration from '../pages/registration/Registration.jsx'
 import Login from '../pages/login/Login.jsx'
 
