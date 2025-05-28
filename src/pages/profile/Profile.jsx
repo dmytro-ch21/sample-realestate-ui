@@ -19,10 +19,47 @@ function Profile() {
   const [editMode, setEditMode] = useState(false);
 
   return (
-    <div className="container">
+    <div className="container mt-4">
       {editMode ? (
         <>
-          <h1>Editing Mode Activated</h1>
+          <div className="mb-2">
+            <label className="form-label">Username</label>
+            <input className="form-control" name="username" type="text" />
+          </div>
+          <div className="mb-2">
+            <label className="form-label">Email</label>
+            <input className="form-control" name="email" />
+          </div>
+          <div className="mb-2">
+            <label className="form-label">First Name</label>
+            <input className="form-control" name="first_name" />
+          </div>
+          <div className="mb-2">
+            <label className="form-label">Last Name</label>
+            <input className="form-control" name="last_name" />
+          </div>
+          <div className="mb-2">
+            <label className="form-label">Phone Number</label>
+            <input className="form-control" name="phone_number" />
+          </div>
+          <div className="mb-2">
+            <label className="form-label">Bio</label>
+            <textarea className="form-control" name="bio" />
+          </div>
+          <div className="mb-2">
+            <label className="form-label">City</label>
+            <input className="form-control" name="city" />
+          </div>
+          <div className="mb-2">
+            <label className="form-label">State</label>
+            <input className="form-control" name="state" />
+          </div>
+          <div className="mb-2">
+            <label className="form-label">Zip Code</label>
+            <input className="form-control" name="zip_code" />
+          </div>
+          <button className="btn btn-success me-2">Save</button>
+          <button className="btn btn-secondary me-2">Cancel</button>
         </>
       ) : (
         <>
