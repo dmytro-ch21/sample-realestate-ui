@@ -4,6 +4,7 @@ import PropertyCard from "../../components/PropertyCard";
 import ProfileEditForm from "./ProfileEditForm";
 import ProfileDisplay from "./ProfileDisplay";
 import PasswordChange from "./PasswordChange";
+import PropertyDeleteModal from "./PropertyDeleteModal";
 
 function Profile() {
   // Add access to global store
@@ -54,7 +55,6 @@ function Profile() {
   });
   // Create state to store the password message
   const [passwordMessage, setPasswordMessage] = useState("");
-
   // Create handler to register changes
   const handlePasswordChange = (e) => {
     setPasswordForm({ ...passwordForm, [e.target.name]: e.target.value });
@@ -80,14 +80,11 @@ function Profile() {
   };
   // Extract the owned_properties from store
   const [ownedProperties, setOwnedProperties] = useState(store.owned_listings);
-
   // Delete Modal
   const [propToDelete, setPropToDelete] = useState(null);
-
   const openDeleteModal = (property) => {
     setPropToDelete(property);
   };
-
   const confirmDelete = () => {
     setOwnedProperties((prev) => prev.filter((p) => p.id !== propToDelete.id));
   };
@@ -147,41 +144,12 @@ function Profile() {
               >
                 Delete
               </button>
-
-              {/* single modal */}
-              <div className="modal fade" id="deleteModal" tabIndex={-1}>
-                <div className="modal-dialog">
-                  <div className="modal-content">
-                    <div className="modal-header">
-                      <h5 className="modal-title">Delete listing?</h5>
-                      <button className="btn-close" data-bs-dismiss="modal" />
-                    </div>
-                    <div className="modal-body">
-                      Are you sure you want to delete
-                      <strong> {propToDelete?.title}</strong>?
-                    </div>
-                    <div className="modal-footer">
-                      <button
-                        className="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="btn btn-danger"
-                        data-bs-dismiss="modal"
-                        onClick={confirmDelete}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </>
         ))}
       </div>
+
+      <PropertyDeleteModal property={propToDelete} onConfirm={confirmDelete} />
     </div>
   );
 }
