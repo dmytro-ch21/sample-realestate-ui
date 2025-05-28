@@ -3,14 +3,13 @@ import { useGlobalStore } from "../../hooks/useGlobalStore";
 import PropertyCard from "../../components/PropertyCard";
 import ProfileEditForm from "./ProfileEditForm";
 import ProfileDisplay from "./ProfileDisplay";
+import PasswordChange from "./PasswordChange";
 
 function Profile() {
   // Add access to global store
   const { store } = useGlobalStore();
   //   Extract the profile info specifically for convinience
-
   const [profile, setProfile] = useState({ ...store.profile_information });
-
   // State for edit button
   const [editMode, setEditMode] = useState(false);
   // State for form
@@ -104,48 +103,15 @@ function Profile() {
         />
       ) : (
         <>
-          <ProfileDisplay 
-            profile={profile}
-            onEdit={() => setEditMode(true)}
+          <ProfileDisplay profile={profile} onEdit={() => setEditMode(true)} />
+          <PasswordChange
+            showForm={showPasswordForm}
+            onToggle={() => setShowPasswordForm(!showPasswordForm)}
+            passwordForm={passwordForm}
+            onChange={handlePasswordChange}
+            onSubmit={handlePasswordSubmit}
+            message={passwordMessage}
           />
-          <button
-            className="btn btn-outline-secondary"
-            onClick={() => setShowPasswordForm(!showPasswordForm)}
-          >
-            {showPasswordForm ? "Cancel Password Change" : "Change Password"}
-          </button>
-          {showPasswordForm && (
-            <form className="mt-3" onSubmit={handlePasswordSubmit}>
-              <input
-                className="form-control mb-2"
-                type="password"
-                name="currentPassword"
-                placeholder="Current Password"
-                value={passwordForm.currentPassword}
-                onChange={handlePasswordChange}
-              />
-              <input
-                className="form-control mb-2"
-                type="password"
-                name="newPassword"
-                placeholder="New Password"
-                value={passwordForm.newPassword}
-                onChange={handlePasswordChange}
-              />
-              <input
-                className="form-control mb-2"
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm New Password"
-                value={passwordForm.confirmPassword}
-                onChange={handlePasswordChange}
-              />
-              <button className="btn btn-primary" type="submit">
-                Change Password
-              </button>
-              {passwordMessage && <div className="mt-2">{passwordMessage}</div>}
-            </form>
-          )}
         </>
       )}
       {/* Create Owned Listings Component */}
