@@ -5,6 +5,7 @@ import ProfileEditForm from "./ProfileEditForm";
 import ProfileDisplay from "./ProfileDisplay";
 import PasswordChange from "./PasswordChange";
 import PropertyDeleteModal from "./PropertyDeleteModal";
+import PropertyListing from "./PropertyListing";
 
 function Profile() {
   // Add access to global store
@@ -112,42 +113,11 @@ function Profile() {
         </>
       )}
       {/* Create Owned Listings Component */}
-      <hr />
-      <div className="d-flex justify-content-between align-items-center">
-        <h4 className="mb-0 fw-bold">Listed Properties</h4>
-        <button
-          className="btn btn-success"
-          onClick={() => console.log("Show Add Modal")}
-        >
-          Add Property
-        </button>
-      </div>
-      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-3">
-        {ownedProperties.length === 0 && (
-          <>
-            <div className="col">
-              <div className="alert alert-info mt-3">
-                No Properties Listed Yet
-              </div>
-            </div>
-          </>
-        )}
-        {ownedProperties.map((property) => (
-          <>
-            <div className="col" key={property.id}>
-              <PropertyCard property={property} />
-              <button
-                className="btn btn-outline-danger btn-sm w-100 mt-1"
-                data-bs-toggle="modal"
-                data-bs-target="#deleteModal"
-                onClick={() => openDeleteModal(property)}
-              >
-                Delete
-              </button>
-            </div>
-          </>
-        ))}
-      </div>
+      <PropertyListing
+        properties={ownedProperties}
+        onDelete={openDeleteModal}
+        onAdd={() => console.log("Show Add Modal")}
+      />
 
       <PropertyDeleteModal property={propToDelete} onConfirm={confirmDelete} />
     </div>
