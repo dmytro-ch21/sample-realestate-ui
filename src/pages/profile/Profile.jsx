@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useGlobalStore } from "../../hooks/useGlobalStore";
+import PropertyCard from "../../components/PropertyCard";
 
 function Profile() {
   // Add access to global store
@@ -75,6 +76,19 @@ function Profile() {
       confirmPassword: "",
     });
     setTimeout(() => setShowPasswordForm(false), 1200);
+  };
+  // Extract the owned_properties from store
+  const [ownedProperties, setOwnedProperties] = useState(store.owned_listings);
+
+  // Delete Modal
+  const [propToDelete, setPropToDelete] = useState(null);
+
+  const openDeleteModal = (property) => {
+    setPropToDelete(property);
+  };
+
+  const confirmDelete = () => {
+    setOwnedProperties((prev) => prev.filter((p) => p.id !== propToDelete.id));
   };
 
   return (
@@ -269,6 +283,74 @@ function Profile() {
           )}
         </>
       )}
+      {/* Create Owned Listings Component */}
+      <hr />
+      <div className="d-flex justify-content-between align-items-center">
+        <h4 className="mb-0 fw-bold">Listed Properties</h4>
+        <button
+          className="btn btn-success"
+          onClick={() => console.log("Show Add Modal")}
+        >
+          Add Property
+        </button>
+      </div>
+      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-3">
+        {ownedProperties.length === 0 && (
+          <>
+            <div className="col">
+              <div className="alert alert-info mt-3">
+                No Properties Listed Yet
+              </div>
+            </div>
+          </>
+        )}
+        {ownedProperties.map((property) => (
+          <>
+            <div className="col" key={property.id}>
+              <PropertyCard property={property} />
+              <button
+                className="btn btn-outline-danger btn-sm w-100 mt-1"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteModal"
+                onClick={() => openDeleteModal(property)}
+              >
+                Delete
+              </button>
+
+              {/* single modal */}
+              <div className="modal fade" id="deleteModal" tabIndex={-1}>
+                <div className="modal-dialog">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title">Delete listing?</h5>
+                      <button className="btn-close" data-bs-dismiss="modal" />
+                    </div>
+                    <div className="modal-body">
+                      Are you sure you want to delete
+                      <strong> {propToDelete?.title}</strong>?
+                    </div>
+                    <div className="modal-footer">
+                      <button
+                        className="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        data-bs-dismiss="modal"
+                        onClick={confirmDelete}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        ))}
+      </div>
     </div>
   );
 }
