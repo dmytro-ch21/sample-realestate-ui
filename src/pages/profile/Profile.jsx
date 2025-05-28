@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useGlobalStore } from "../../hooks/useGlobalStore";
 import PropertyCard from "../../components/PropertyCard";
+import ProfileEditForm from "../../components/ProfileEditForm";
 
 function Profile() {
   // Add access to global store
@@ -94,99 +95,12 @@ function Profile() {
   return (
     <div className="container mt-4">
       {editMode ? (
-        <>
-          <div className="mb-2">
-            <label className="form-label">Username</label>
-            <input
-              className="form-control"
-              name="username"
-              type="text"
-              value={form.username}
-              onChange={handleCHange}
-            />
-          </div>
-          <div className="mb-2">
-            <label className="form-label">Email</label>
-            <input
-              className="form-control"
-              name="email"
-              value={form.email}
-              onChange={handleCHange}
-            />
-          </div>
-          <div className="mb-2">
-            <label className="form-label">First Name</label>
-            <input
-              className="form-control"
-              name="first_name"
-              value={form.first_name}
-              onChange={handleCHange}
-            />
-          </div>
-          <div className="mb-2">
-            <label className="form-label">Last Name</label>
-            <input
-              className="form-control"
-              name="last_name"
-              value={form.last_name}
-              onChange={handleCHange}
-            />
-          </div>
-          <div className="mb-2">
-            <label className="form-label">Phone Number</label>
-            <input
-              className="form-control"
-              name="phone_number"
-              value={form.phone_number}
-              onChange={handleCHange}
-            />
-          </div>
-          <div className="mb-2">
-            <label className="form-label">Bio</label>
-            <textarea
-              className="form-control"
-              name="bio"
-              value={form.bio}
-              onChange={handleCHange}
-            />
-          </div>
-          <div className="mb-2">
-            <label className="form-label">City</label>
-            <input
-              className="form-control"
-              name="city"
-              value={form.city}
-              onChange={handleCHange}
-            />
-          </div>
-          <div className="mb-2">
-            <label className="form-label">State</label>
-            <input
-              className="form-control"
-              name="state"
-              value={form.state}
-              onChange={handleCHange}
-            />
-          </div>
-          <div className="mb-2">
-            <label className="form-label">Zip Code</label>
-            <input
-              className="form-control"
-              name="zip_code"
-              value={form.zip_code}
-              onChange={handleCHange}
-            />
-          </div>
-          <button className="btn btn-success me-2" onClick={handleSave}>
-            Save
-          </button>
-          <button
-            className="btn btn-secondary me-2"
-            onClick={() => setEditMode(false)}
-          >
-            Cancel
-          </button>
-        </>
+        <ProfileEditForm 
+            form={form}
+            onChange={handleCHange}
+            onSave={handleSave}
+            onCancel={() => setEditMode(false)}
+        />
       ) : (
         <>
           <div className="d-flex justify-content-between align-items-center">
