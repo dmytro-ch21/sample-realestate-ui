@@ -1,16 +1,18 @@
-import { Link } from 'react-router';
+import { NavLink } from 'react-router';
+import './NavButton.css';
 
-function NavButton({ to, text }) {
+function NavButton({ to, text, callback }) {
   return (
     <>
-      <Link
-        className="text-decoration-none btn btn-outline-dark btn-sm m-2"
+      <NavLink
         to={to}
+        className={({ isActive }) => `${isActive ? 'active' : 'not-active'}`}
       >
-        {text}
-      </Link>
+        <span onClick={callback}>{text}</span>
+      </NavLink>
     </>
   );
 }
 
 export default NavButton;
+

@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "stylelint.vscode-stylelint",
+    "bradlc.vscode-tailwindcss",
+    "eamodio.gitlens",
+    "ritwickdey.LiveServer",
+    "rangav.vscode-thunder-client",
+    "beardedthemes.beardedtheme", // <— supplies HC Brewing Storm
+    "vscode-icons-team.vscode-icons"
+  ]
+}
