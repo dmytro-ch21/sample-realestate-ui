@@ -42,6 +42,40 @@ function Profile() {
     });
     setEditMode(false);
   };
+  // Create a state to show password change form
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  // Create state for password form
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  // Create state to store the password message
+  const [passwordMessage, setPasswordMessage] = useState("");
+
+  // Create handler to register changes
+  const handlePasswordChange = (e) => {
+    setPasswordForm({ ...passwordForm, [e.target.name]: e.target.value });
+  };
+  // Create handler to submit form password change
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordMessage("New passwords do not match.");
+      return;
+    }
+    if (!passwordForm.currentPassword || !passwordForm.newPassword) {
+      setPasswordMessage("Please fill in all password fields.");
+      return;
+    }
+    setPasswordMessage("Password changed successfully!");
+    setPasswordForm({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+    setTimeout(() => setShowPasswordForm(false), 1200);
+  };
 
   return (
     <div className="container mt-4">
@@ -195,6 +229,44 @@ function Profile() {
               </p>
             </div>
           </div>
+          <button
+            className="btn btn-outline-secondary"
+            onClick={() => setShowPasswordForm(!showPasswordForm)}
+          >
+            {showPasswordForm ? "Cancel Password Change" : "Change Password"}
+          </button>
+          {showPasswordForm && (
+            <form className="mt-3" onSubmit={handlePasswordSubmit}>
+              <input
+                className="form-control mb-2"
+                type="password"
+                name="currentPassword"
+                placeholder="Current Password"
+                value={passwordForm.currentPassword}
+                onChange={handlePasswordChange}
+              />
+              <input
+                className="form-control mb-2"
+                type="password"
+                name="newPassword"
+                placeholder="New Password"
+                value={passwordForm.newPassword}
+                onChange={handlePasswordChange}
+              />
+              <input
+                className="form-control mb-2"
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm New Password"
+                value={passwordForm.confirmPassword}
+                onChange={handlePasswordChange}
+              />
+              <button className="btn btn-primary" type="submit">
+                Change Password
+              </button>
+              {passwordMessage && <div className="mt-2">{passwordMessage}</div>}
+            </form>
+          )}
         </>
       )}
     </div>
