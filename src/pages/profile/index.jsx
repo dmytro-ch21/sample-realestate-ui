@@ -6,6 +6,7 @@ import ProfileDisplay from "./ProfileDisplay";
 import PasswordChange from "./PasswordChange";
 import PropertyDeleteModal from "./PropertyDeleteModal";
 import PropertyListing from "./PropertyListing";
+import PropertyModal from "./PropertyModal";
 
 function Profile() {
   // Add access to global store
@@ -14,6 +15,9 @@ function Profile() {
   const [profile, setProfile] = useState({ ...store.profile_information });
   // State for edit button
   const [editMode, setEditMode] = useState(false);
+  // State for add property modal
+  const [showAddModal, setShowAddModal] = useState(true);
+
   // State for form
   const [form, setForm] = useState({
     bio: profile.bio,
@@ -31,7 +35,7 @@ function Profile() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
   // Create handler for save button
-  const handleSave = (e) => {
+  const handleSave = () => {
     setProfile({
       ...profile,
       bio: form.bio,
@@ -116,10 +120,18 @@ function Profile() {
       <PropertyListing
         properties={ownedProperties}
         onDelete={openDeleteModal}
-        onAdd={() => console.log("Show Add Modal")}
+        onAdd={() => setShowAddModal(true)}
       />
 
       <PropertyDeleteModal property={propToDelete} onConfirm={confirmDelete} />
+
+      {showAddModal && (
+        <PropertyModal
+          setShowAddModal={setShowAddModal}
+          setProfile={setProfile}
+          profile={profile}
+        />
+      )}
     </div>
   );
 }
