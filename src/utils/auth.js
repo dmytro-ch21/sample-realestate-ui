@@ -28,3 +28,15 @@ export function isTokenValid(token = getToken()) {
     return false;
   }
 }
+
+export function getDecodedToken(token = getToken()) {
+  console.log("Getting decoded token");
+  if (!token) return false;
+  try {
+    const decodedToken = jwtDecode(token);
+    console.log("Token Decode:", decodedToken);
+    return decodedToken;
+  } catch {
+    return false;
+  }
+}

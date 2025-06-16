@@ -1,54 +1,120 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGlobalStore } from "../../hooks/useGlobalStore";
-import PropertyCard from "../../components/PropertyCard";
 import ProfileEditForm from "./ProfileEditForm";
 import ProfileDisplay from "./ProfileDisplay";
 import PasswordChange from "./PasswordChange";
 import PropertyDeleteModal from "./PropertyDeleteModal";
 import PropertyListing from "./PropertyListing";
 import PropertyModal from "./PropertyModal";
+import { getUserById, updateUser, updateUserProfile } from "../../api/user";
+import { getDecodedToken, getToken, isTokenValid } from "../../utils/auth";
+import { useNavigate } from "react-router";
 
 function Profile() {
   // Add access to global store
   const { store } = useGlobalStore();
-  //   Extract the profile info specifically for convinience
-  const [profile, setProfile] = useState({ ...store.profile_information });
-  // State for edit button
-  const [editMode, setEditMode] = useState(false);
-  // State for add property modal
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [profile, setProfile] = useState(null);
+  const navigate = useNavigate();
 
   // State for form
   const [form, setForm] = useState({
-    bio: profile.bio,
-    city: profile.city,
-    first_name: profile.first_name,
-    last_name: profile.last_name,
-    phone_number: profile.phone_number,
-    state: profile.state,
-    zip_code: profile.zip_code,
-    email: profile.email,
-    username: profile.username,
+    bio: "",
+    city: "",
+    first_name: "",
+    last_name: "",
+    phone_number: "",
+    state: "",
+    zip_code: "",
+    email: "",
+    username: "",
   });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = getToken();
+        if (!token || !isTokenValid()) {
+          console.log("No valid token found");
+          navigate("/login");
+          return;
+        }
+        const decodedToken = getDecodedToken();
+        if (decodedToken) {
+          const userResponse = await getUserById(
+            token,
+            parseInt(decodedToken.sub)
+          );
+
+          setProfile({
+            ...userResponse,
+            ...userResponse.profile_information,
+          });
+
+          setForm({
+            bio: userResponse.profile_information?.bio || "",
+            city: userResponse.profile_information?.city || "",
+            first_name: userResponse.profile_information?.first_name || "",
+            last_name: userResponse.profile_information?.last_name || "",
+            phone_number: userResponse.profile_information?.phone_number || "",
+            state: userResponse.profile_information?.state || "",
+            zip_code: userResponse.profile_information?.zip_code || "",
+            email: userResponse.email || "",
+            username: userResponse.username || "",
+          });
+        }
+      } catch (error) {
+        console.error("Error loading profile:", error);
+      }
+    };
+
+    fetchProfile();
+  }, [navigate]);
+
+  // State for edit button
+  const [editMode, setEditMode] = useState(false);
+
+  // State for add property modal
+  const [showAddModal, setShowAddModal] = useState(false);
+
   // Create a handler for changes
-  const handleCHange = (e) => {
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
   // Create handler for save button
-  const handleSave = () => {
-    setProfile({
-      ...profile,
-      bio: form.bio,
-      city: form.city,
-      first_name: form.first_name,
-      last_name: form.last_name,
-      phone_number: form.phone_number,
-      state: form.state,
-      zip_code: form.zip_code,
-      email: form.email,
-      username: form.username,
-    });
-    setEditMode(false);
+  const handleSave = async () => {
+    try {
+      const token = getToken();
+      const userData = {
+        email: form.email,
+        username: form.username,
+      };
+      // Prepare profile data
+      const profileData = {
+        bio: form.bio,
+        city: form.city,
+        first_name: form.first_name,
+        last_name: form.last_name,
+        phone_number: form.phone_number,
+        state: form.state,
+        zip_code: form.zip_code,
+      };
+
+      await updateUserProfile(store.auth.token, profile.id, profileData);
+
+      const userResponse = await updateUser(
+        store.auth.token,
+        profile.id,
+        userData
+      );
+      setEditMode(false);
+      setProfile({
+        ...profile,
+        ...userResponse.user,
+        ...userResponse.user.profile_information,
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
   // Create a state to show password change form
   const [showPasswordForm, setShowPasswordForm] = useState(false);
@@ -84,7 +150,13 @@ function Profile() {
     setTimeout(() => setShowPasswordForm(false), 1200);
   };
   // Extract the owned_properties from store
-  const [ownedProperties, setOwnedProperties] = useState(store.owned_listings);
+  const [ownedProperties, setOwnedProperties] = useState([]);
+  useEffect(() => {
+    console.log("Setting Owned Listings", profile?.owned_listings);
+    if (profile?.owned_listings) {
+      setOwnedProperties(profile.owned_listings);
+    }
+  }, [profile]); // Add profile as dependency
   // Delete Modal
   const [propToDelete, setPropToDelete] = useState(null);
   const openDeleteModal = (property) => {
@@ -99,13 +171,19 @@ function Profile() {
       {editMode ? (
         <ProfileEditForm
           form={form}
-          onChange={handleCHange}
+          onChange={handleChange}
           onSave={handleSave}
           onCancel={() => setEditMode(false)}
         />
       ) : (
         <>
-          <ProfileDisplay profile={profile} onEdit={() => setEditMode(true)} />
+          {/* Only render ProfileDisplay if profile exists */}
+          {profile && (
+            <ProfileDisplay
+              profile={profile}
+              onEdit={() => setEditMode(true)}
+            />
+          )}
           <PasswordChange
             showForm={showPasswordForm}
             onToggle={() => setShowPasswordForm(!showPasswordForm)}
@@ -116,7 +194,7 @@ function Profile() {
           />
         </>
       )}
-      {/* Create Owned Listings Component */}
+
       <PropertyListing
         properties={ownedProperties}
         onDelete={openDeleteModal}

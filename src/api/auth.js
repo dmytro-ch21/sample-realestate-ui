@@ -19,10 +19,13 @@ export async function registerUser(payload) {
     headers: jsonHeaders,
     body: JSON.stringify({ email, username, password }),
   });
+
+  const data = await response.json();
+
   if (!response.ok) {
-    throw new Error(response.statusText);
+    throw new Error(data.message);
   }
-  return response.json();
+  return data;
 }
 
 /**

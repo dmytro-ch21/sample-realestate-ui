@@ -35,7 +35,11 @@ const Registration = () => {
       await registerUser(formData);
       navigate("/login");
     } catch (e) {
-      console.error("Registration error:", e);
+      console.error("Registration error:", e.message);
+      setShowError({
+        show: true,
+        message: e.message,
+      });
     }
   };
 
@@ -88,14 +92,6 @@ const Registration = () => {
                         aria-describedby="passwordHelpBlock"
                         required
                       />
-
-                      {showError.show ? (
-                        <div id="passwordHelpBlock m-2" class="form-text">
-                          {showError.message}
-                        </div>
-                      ) : (
-                        ""
-                      )}
                     </div>
 
                     {/* Confirm Password */}
@@ -110,7 +106,15 @@ const Registration = () => {
                         required
                       />
                     </div>
-
+                    <>
+                      {showError.show ? (
+                        <div id="passwordHelpBlock m-2" class="form-text">
+                          {showError.message}
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </>
                     {/* Submit Button */}
                     <div className="col-12 d-flex justify-content-center mt-4">
                       <button type="submit" className="btn btn-primary px-4">

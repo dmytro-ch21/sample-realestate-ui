@@ -10,18 +10,18 @@ function PropertyListing({ properties, onDelete, onAdd }) {
           Add Property
         </button>
       </div>
-      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-3">
-        {properties.length === 0 && (
-          <>
-            <div className="col">
-              <div className="alert alert-info mt-3">
-                No Properties Listed Yet
-              </div>
+
+      {!properties || properties.length === 0 ? (
+        <>
+          <div className="col-12 d-flex justify-content-center">
+            <div className="alert alert-info mt-3 d-flex justify-content-center">
+              No Properties Listed Yet
             </div>
-          </>
-        )}
-        {properties.map((property) => (
-          <>
+          </div>
+        </>
+      ) : (
+        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-3">
+          {properties.map((property) => (
             <div className="col" key={property.id}>
               <PropertyCard property={property} />
               <button
@@ -33,9 +33,9 @@ function PropertyListing({ properties, onDelete, onAdd }) {
                 Delete
               </button>
             </div>
-          </>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </>
   );
 }

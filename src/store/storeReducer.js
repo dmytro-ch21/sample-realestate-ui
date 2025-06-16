@@ -63,6 +63,15 @@ export function storeReducer(state, action) {
         },
       };
 
+    case "SET_USER":
+      return {
+        ...state,
+        auth: {
+          ...state.auth,
+          user: action.payload,
+        },
+      };
+
     default:
       return state;
   }
