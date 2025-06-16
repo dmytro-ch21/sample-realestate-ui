@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router'
+import { useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { registerUser } from "../../api/auth";
+import { isValidPassword } from "../../utils/helpers";
 
 const Registration = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [showError, setShowError] = useState({ show: false, message: null });
 
   const [formData, setFormData] = useState({
-    email: '',
-    username: '',
-    password: '',
-    confirmPassword: '',
+    email: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const handleChange = (e) => {
@@ -18,12 +21,22 @@ const Registration = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Form validation would go here
-    console.log('Registration data:', formData);
-    // Submit to API would go here
-    navigate("/login");
+    try {
+      console.log("Payload data:", formData);
+      if (!isValidPassword(formData.password)) {
+        setShowError({
+          show: true,
+          message:
+            "Password should be 5 characters or more and have at least one digit.",
+        });
+      }
+      await registerUser(formData);
+      navigate("/login");
+    } catch (e) {
+      console.error("Registration error:", e);
+    }
   };
 
   return (
@@ -72,8 +85,17 @@ const Registration = () => {
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
+                        aria-describedby="passwordHelpBlock"
                         required
                       />
+
+                      {showError.show ? (
+                        <div id="passwordHelpBlock m-2" class="form-text">
+                          {showError.message}
+                        </div>
+                      ) : (
+                        ""
+                      )}
                     </div>
 
                     {/* Confirm Password */}

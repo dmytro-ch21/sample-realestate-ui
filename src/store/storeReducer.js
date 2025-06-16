@@ -1,3 +1,5 @@
+import { clearToken, saveToken } from "../utils/auth";
+
 /**
  * Reducer function to manage the state.
  *
@@ -19,15 +21,48 @@
  */
 export function storeReducer(state, action) {
   switch (action.type) {
-    case 'ADD_TASK':
+    case "AUTH_START":
       return {
         ...state,
-        todos: [...state.todos, action.payload.task],
+        auth: { ...state.auth, loading: true, error: null },
       };
-    case 'DELETE_TASK':
-      return state.todos.filter((todo) => todo !== action.payload.id);
-    case 'SET_TODOS':
-      return { ...state, todos: action.payload.todos };
+    case "AUTH_SUCCESS": {
+      const { token, user } = action.payload;
+      saveToken(token);
+      return {
+        ...state,
+        auth: {
+          loading: false,
+          error: null,
+          isAuthenticated: true,
+          user,
+          token,
+        },
+      };
+    }
+    case "AUTH_FAILURE":
+      return {
+        ...state,
+        auth: {
+          ...state.auth,
+          loading: false,
+          error: action.payload,
+          isAuthenticated: false,
+        },
+      };
+    case "LOGOUT":
+      clearToken();
+      return {
+        ...state,
+        auth: {
+          user: null,
+          token: null,
+          isAuthenticated: false,
+          loading: false,
+          error: null,
+        },
+      };
+
     default:
       return state;
   }

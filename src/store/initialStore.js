@@ -640,5 +640,12 @@ export const initialState = () => ({
       zip_code: "Some Zipcode",
     },
   ],
+  auth: {
+    loading: false,
+    error: null,
+    isAuthenticated: false,
+    user: null,
+    token: null,
+  },
   // you can add here more slices (properties in the object) - user, theme, etc...
 });

@@ -1,4 +1,4 @@
-const Navbar = ({children}) => {
+const Navbar = ({ children }) => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white py-2 sticky-top shadow-sm">
       <div className="container">
@@ -19,7 +19,7 @@ const Navbar = ({children}) => {
         </button>
 
         <div className="collapse navbar-collapse" id="navbarMain">
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+          <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex justify-content-center align-items-center">
             {children}
           </ul>
         </div>

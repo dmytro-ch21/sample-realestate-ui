@@ -16,7 +16,7 @@ function Profile() {
   // State for edit button
   const [editMode, setEditMode] = useState(false);
   // State for add property modal
-  const [showAddModal, setShowAddModal] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   // State for form
   const [form, setForm] = useState({
