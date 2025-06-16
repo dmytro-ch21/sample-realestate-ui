@@ -1,38 +1,72 @@
-import { useNavigate, useParams } from 'react-router';
-import { useGlobalStore } from '../../hooks/useGlobalStore';
+import { useNavigate, useParams } from "react-router";
+import { useGlobalStore } from "../../hooks/useGlobalStore";
 import {
   FaBed,
   FaBath,
   FaRulerCombined,
   FaMapLocationDot,
   FaHouseChimney,
-} from 'react-icons/fa6';
+} from "react-icons/fa6";
+import { useEffect, useState } from "react";
+import { getListingById } from "../../api/listings";
 
 function Listing() {
-  
   const { store, dispatch } = useGlobalStore();
   const { id } = useParams();
   const propertyId = parseInt(id);
   const navigate = useNavigate();
 
-  // fetch property - with api
-  // example find the property in listings
-  const property = store.listings.find((p) => p.id === propertyId);
+  const [property, setProperty] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!property) {
+  useEffect(() => {
+    const fetchProperty = async () => {
+      try {
+        setLoading(true);
+        const propertyData = await getListingById(propertyId);
+        setProperty(propertyData);
+      } catch (e) {
+        console.error("Error fetching property: ", e);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProperty();
+  }, [propertyId]);
+
+  // Error state
+  if (error) {
     return (
-      <div className="container">
-        <h2>Property Not Found</h2>
-        <p>
-          The property you're looking for doesn't exist or has been removed.
-        </p>
+      <div className="container py-4">
+        <h2>Error Loading Property</h2>
+        <p className="text-danger">{error}</p>
+        <button className="btn btn-primary" onClick={() => navigate(-1)}>
+          Go Back
+        </button>
       </div>
     );
   }
 
-  const formatPriceUS = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+  // Property not found
+  if (!property) {
+    return (
+      <div className="container py-4">
+        <h2>Property Not Found</h2>
+        <p>
+          The property you're looking for doesn't exist or has been removed.
+        </p>
+        <button className="btn btn-primary" onClick={() => navigate(-1)}>
+          Go Back
+        </button>
+      </div>
+    );
+  }
+
+  const formatPriceUS = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(property.price);
@@ -43,14 +77,12 @@ function Listing() {
 
   return (
     <div className="container py-4">
-      
-
       <div className="d-flex justify-content-between">
-      <h2 className="mb-4">Listing Page</h2>
+        <h2 className="mb-4">Listing Page</h2>
         <button
           className="btn btn-link p-0 mb-3"
           onClick={() => navigate(-1)}
-          style={{ textDecoration: 'none' }}
+          style={{ textDecoration: "none" }}
         >
           &larr; Go back
         </button>
@@ -119,14 +151,14 @@ function Listing() {
         <div className="col-12">
           <div className="card border">
             <div className="card-body py-3">
-            <p className="mb-2">
+              <p className="mb-2">
                 <FaHouseChimney className="me-1" />
                 <span className="text-capitalize">
                   {property.property_type}
                 </span>
               </p>
               <h5 className="mb-2">{property.title}</h5>
-              
+
               <p className="mb-0">{property.description}</p>
             </div>
           </div>

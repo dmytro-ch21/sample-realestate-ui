@@ -67,3 +67,29 @@ export async function uploadListingImage(token, listingId, imageFile, caption) {
   }
   return data;
 }
+
+/**
+ * GET /listings/{listingId}
+ * @param {number} listingId - The listing ID
+ * @return {Promise<Object>} {listing}
+ */
+export async function getListingById(listingId) {
+  const url = `${API_BASE}${API_PREFIX}/listings/${listingId}`;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      'User-Agent': 'client-web',
+    },
+  });
+
+  const data = await response.json();
+
+  console.log("Get listing response:", data);
+
+  if (!response.ok) {
+    throw new Error(data.error || response.statusText);
+  }
+  return data;
+}
+
+// ...existing createListing and uploadListingImage functions...
