@@ -43,7 +43,7 @@ export async function createListing(token, payload) {
  */
 export async function uploadListingImage(token, listingId, imageFile, caption) {
   const url = `${API_BASE}${API_PREFIX}/listings/${listingId}/images`;
-  
+
   const formData = new FormData();
   formData.append("image", imageFile);
   formData.append("caption", caption);
@@ -52,7 +52,7 @@ export async function uploadListingImage(token, listingId, imageFile, caption) {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
-      'User-Agent': 'client-web',
+      "User-Agent": "client-web",
       // Don't set Content-Type for FormData
     },
     body: formData,
@@ -78,7 +78,7 @@ export async function getListingById(listingId) {
   const response = await fetch(url, {
     method: "GET",
     headers: {
-      'User-Agent': 'client-web',
+      "User-Agent": "client-web",
     },
   });
 
@@ -92,4 +92,25 @@ export async function getListingById(listingId) {
   return data;
 }
 
-// ...existing createListing and uploadListingImage functions...
+/**
+ * GET /listings
+ * @return {Promise<Array>} Array of listings
+ */
+export async function getAllListings() {
+  const url = `${API_BASE}${API_PREFIX}/listings`;
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "User-Agent": "client-web",
+    },
+  });
+
+  const data = await response.json();
+
+  console.log("Get all listings response:", data);
+
+  if (!response.ok) {
+    throw new Error(data.error || response.statusText);
+  }
+  return data;
+}

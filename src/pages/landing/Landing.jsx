@@ -1,10 +1,30 @@
+import { useEffect, useState } from "react";
+import { getAllListings } from "../../api/listings";
 import Hero from "../../components/Hero";
 import PropertyListing from "../../components/PropertyListings";
-import { useGlobalStore } from "../../hooks/useGlobalStore";
 
 function Landing() {
-  const { store } = useGlobalStore();
-  console.log("Accessed store:", store);
+  const [listings, setListings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchListings = async () => {
+      try {
+        setLoading(true);
+        const listingsData = await getAllListings();
+        setListings(listingsData.slice(0, 4)); // Only keep first 4
+      } catch (error) {
+        console.error("Error fetching listings:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchListings();
+  }, []);
+
   return (
     <div className="container-fluid">
       <div>
@@ -19,7 +39,25 @@ function Landing() {
             </p>
           </div>
         </div>
-        <PropertyListing properties={store.listings.slice(0, 4)} />
+
+        {/* Error State */}
+        {error && (
+          <div className="alert alert-warning" role="alert">
+            Failed to load listings: {error}
+          </div>
+        )}
+
+        {/* Loading State */}
+        {loading ? (
+          <div className="d-flex justify-content-center py-4">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        ) : (
+          /* Property Listing - Only first 4 */
+          <PropertyListing properties={listings} />
+        )}
       </div>
     </div>
   );
