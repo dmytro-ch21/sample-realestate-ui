@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { getAllListings } from "../../api/listings";
-import { useGlobalStore } from "../../hooks/useGlobalStore.js";
 import SearchBar from "../../components/Search.jsx";
 import PropertyCard from "../../components/PropertyCard.jsx";
 
 function Home() {
-  const { store } = useGlobalStore();
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -60,7 +58,7 @@ function Home() {
           ) : (
             listings.map((property) => (
               <div key={property.id} className="col mb-4">
-                <PropertyCard property={property} />
+                <PropertyCard property={property} showWishlistButton={true} />
               </div>
             ))
           )}

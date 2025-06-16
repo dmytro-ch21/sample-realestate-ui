@@ -64,7 +64,7 @@ export async function getUserById(token, userId) {
   const url = `${API_BASE}${API_PREFIX}/users/${userId}`;
   const response = await fetch(url, {
     method: "GET",
-    headers: { ...jsonHeaders, Authorization: `Bearer ${token}` }
+    headers: { ...jsonHeaders, Authorization: `Bearer ${token}` },
   });
 
   const data = await response.json();
@@ -86,15 +86,15 @@ export async function getUserById(token, userId) {
  */
 export async function uploadProfileImage(token, userId, imageFile) {
   const url = `${API_BASE}${API_PREFIX}/users/${userId}/profile/image`;
-  
+
   const formData = new FormData();
   formData.append("image", imageFile);
 
   const response = await fetch(url, {
     method: "PATCH",
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'User-Agent': 'client-web',
+      Authorization: `Bearer ${token}`,
+      "User-Agent": "client-web",
       // Don't set Content-Type for FormData - browser will set it automatically with boundary
     },
     body: formData,
@@ -103,6 +103,60 @@ export async function uploadProfileImage(token, userId, imageFile) {
   const data = await response.json();
 
   console.log("Upload image response:", data);
+
+  if (!response.ok) {
+    throw new Error(data.error || response.statusText);
+  }
+  return data;
+}
+
+/**
+ * POST /wishlist/{userId}/listing/{listingId}
+ * @param {string} token - Authorization token
+ * @param {number} userId - The user ID
+ * @param {number} listingId - The listing ID
+ * @return {Promise<Object>} Response from API
+ */
+export async function addToWishlist(token, userId, listingId) {
+  const url = `${API_BASE}${API_PREFIX}/wishlist/${userId}/listing/${listingId}`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "User-Agent": "client-web",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await response.json();
+
+  console.log("Add to wishlist response:", data);
+
+  if (!response.ok) {
+    throw new Error(data.error || response.statusText);
+  }
+  return data;
+}
+
+/**
+ * DELETE /wishlist/{userId}/wishlist-item/{wishlistItemId}
+ * @param {string} token - Authorization token
+ * @param {number} userId - The user ID
+ * @param {number} wishlistItemId - The wishlist item ID
+ * @return {Promise<Object>} Response from API
+ */
+export async function removeFromWishlist(token, userId, wishlistItemId) {
+  const url = `${API_BASE}${API_PREFIX}/wishlist/${userId}/wishlist-item/${wishlistItemId}`;
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      "User-Agent": "client-web",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await response.json();
+
+  console.log("Remove from wishlist response:", data);
 
   if (!response.ok) {
     throw new Error(data.error || response.statusText);
