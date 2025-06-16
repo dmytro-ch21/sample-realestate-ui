@@ -201,9 +201,8 @@ function PropertyModal({ setShowAddModal, setProfile, profile }) {
                 }
                 disabled={isSubmitting}
               />
-              <input
+              <select
                 className="form-control mb-2"
-                placeholder="Property Type"
                 value={newProperty.property_type}
                 onChange={(e) =>
                   setNewProperty({
@@ -212,7 +211,14 @@ function PropertyModal({ setShowAddModal, setProfile, profile }) {
                   })
                 }
                 disabled={isSubmitting}
-              />
+              >
+                <option value="">Select Property Type</option>
+                <option value="house">House</option>
+                <option value="apartment">Apartment</option>
+                <option value="condo">Condo</option>
+                <option value="townhouse">Townhouse</option>
+                <option value="commercial">Commercial</option>
+              </select>
               <input
                 className="form-control mb-2"
                 placeholder="Address"
