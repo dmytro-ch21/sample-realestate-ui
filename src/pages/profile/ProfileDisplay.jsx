@@ -1,4 +1,22 @@
-function ProfileDisplay({ profile, onEdit }) {
+import { uploadProfileImage } from "../../api/user";
+import { getToken } from "../../utils/auth";
+
+function ProfileDisplay({ profile, onEdit, onAvatarUpdate }) {
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const token = getToken();
+      const response = await uploadProfileImage(token, profile.id, file);
+      onAvatarUpdate(response.profile);
+      console.log("Avatar uploaded successfully.");
+    } catch (e) {
+      console.error("Error uploading avatar:", e);
+      alert("Failed to upload avatar. Please try again");
+    }
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between align-items-center">
@@ -13,16 +31,32 @@ function ProfileDisplay({ profile, onEdit }) {
       <div className="card mb-4">
         <div className="card-body">
           <div className="d-flex align-items-center mb-3">
-            <img
-              src={profile.avatar_url}
-              alt="Avatar"
-              style={{
-                width: 64,
-                height: 64,
-                borderRadius: "50%",
-                marginRight: 16,
-              }}
-            />
+            <div className="me-4">
+              <label htmlFor="avatar-upload" style={{ cursor: "pointer" }}>
+                <img
+                  src={profile.avatar_url || "https://via.placeholder.com/150"}
+                  alt="Profile Avatar"
+                  className="rounded-circle"
+                  style={{
+                    width: "120px",
+                    height: "120px",
+                    objectFit: "cover",
+                    transition: "opacity 0.2s",
+                  }}
+                  onMouseOver={(e) => (e.target.style.opacity = "0.8")}
+                  onMouseOut={(e) => (e.target.style.opacity = "1")}
+                  title="Click to change avatar"
+                />
+              </label>
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                style={{ display: "none" }}
+              />
+            </div>
+
             <div>
               <p className="mb-1">
                 <strong>

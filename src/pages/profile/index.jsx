@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useGlobalStore } from "../../hooks/useGlobalStore";
+import { useNavigate } from "react-router";
 import ProfileEditForm from "./ProfileEditForm";
 import ProfileDisplay from "./ProfileDisplay";
 import PasswordChange from "./PasswordChange";
@@ -8,15 +8,19 @@ import PropertyListing from "./PropertyListing";
 import PropertyModal from "./PropertyModal";
 import { getUserById, updateUser, updateUserProfile } from "../../api/user";
 import { getDecodedToken, getToken, isTokenValid } from "../../utils/auth";
-import { useNavigate } from "react-router";
 
 function Profile() {
-  // Add access to global store
-  const { store } = useGlobalStore();
-  const [profile, setProfile] = useState(null);
   const navigate = useNavigate();
 
-  // State for form
+  // ============================================================================
+  // PROFILE STATE
+  // ============================================================================
+  const [profile, setProfile] = useState(null);
+
+  // ============================================================================
+  // EDIT MODE STATE
+  // ============================================================================
+  const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState({
     bio: "",
     city: "",
@@ -29,6 +33,27 @@ function Profile() {
     username: "",
   });
 
+  // ============================================================================
+  // PASSWORD CHANGE STATE
+  // ============================================================================
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [passwordMessage, setPasswordMessage] = useState("");
+
+  // ============================================================================
+  // PROPERTY STATE
+  // ============================================================================
+  const [ownedProperties, setOwnedProperties] = useState([]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [propToDelete, setPropToDelete] = useState(null);
+
+  // ============================================================================
+  // PROFILE DATA LOADING
+  // ============================================================================
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -38,6 +63,7 @@ function Profile() {
           navigate("/login");
           return;
         }
+
         const decodedToken = getDecodedToken();
         if (decodedToken) {
           const userResponse = await getUserById(
@@ -70,25 +96,32 @@ function Profile() {
     fetchProfile();
   }, [navigate]);
 
-  // State for edit button
-  const [editMode, setEditMode] = useState(false);
+  // ============================================================================
+  // PROPERTY DATA SYNC
+  // ============================================================================
+  useEffect(() => {
+    console.log("Setting Owned Listings", profile?.owned_listings);
+    if (profile?.owned_listings) {
+      setOwnedProperties(profile.owned_listings);
+    }
+  }, [profile]);
 
-  // State for add property modal
-  const [showAddModal, setShowAddModal] = useState(false);
-
-  // Create a handler for changes
+  // ============================================================================
+  // PROFILE EDIT HANDLERS
+  // ============================================================================
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  // Create handler for save button
+
   const handleSave = async () => {
     try {
       const token = getToken();
+
       const userData = {
         email: form.email,
         username: form.username,
       };
-      // Prepare profile data
+
       const profileData = {
         bio: form.bio,
         city: form.city,
@@ -99,13 +132,9 @@ function Profile() {
         zip_code: form.zip_code,
       };
 
-      await updateUserProfile(store.auth.token, profile.id, profileData);
+      await updateUserProfile(token, profile.id, profileData);
+      const userResponse = await updateUser(token, profile.id, userData);
 
-      const userResponse = await updateUser(
-        store.auth.token,
-        profile.id,
-        userData
-      );
       setEditMode(false);
       setProfile({
         ...profile,
@@ -116,31 +145,34 @@ function Profile() {
       console.error("Error updating profile:", error);
     }
   };
-  // Create a state to show password change form
-  const [showPasswordForm, setShowPasswordForm] = useState(false);
-  // Create state for password form
-  const [passwordForm, setPasswordForm] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
-  // Create state to store the password message
-  const [passwordMessage, setPasswordMessage] = useState("");
-  // Create handler to register changes
+
+  const handleAvatarUpdate = (updatedProfile) => {
+    setProfile({
+      ...profile,
+      ...updatedProfile,
+    });
+  };
+
+  // ============================================================================
+  // PASSWORD CHANGE HANDLERS
+  // ============================================================================
   const handlePasswordChange = (e) => {
     setPasswordForm({ ...passwordForm, [e.target.name]: e.target.value });
   };
-  // Create handler to submit form password change
+
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
+
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
       setPasswordMessage("New passwords do not match.");
       return;
     }
+
     if (!passwordForm.currentPassword || !passwordForm.newPassword) {
       setPasswordMessage("Please fill in all password fields.");
       return;
     }
+
     setPasswordMessage("Password changed successfully!");
     setPasswordForm({
       currentPassword: "",
@@ -149,23 +181,21 @@ function Profile() {
     });
     setTimeout(() => setShowPasswordForm(false), 1200);
   };
-  // Extract the owned_properties from store
-  const [ownedProperties, setOwnedProperties] = useState([]);
-  useEffect(() => {
-    console.log("Setting Owned Listings", profile?.owned_listings);
-    if (profile?.owned_listings) {
-      setOwnedProperties(profile.owned_listings);
-    }
-  }, [profile]); // Add profile as dependency
-  // Delete Modal
-  const [propToDelete, setPropToDelete] = useState(null);
+
+  // ============================================================================
+  // PROPERTY MANAGEMENT HANDLERS
+  // ============================================================================
   const openDeleteModal = (property) => {
     setPropToDelete(property);
   };
+
   const confirmDelete = () => {
     setOwnedProperties((prev) => prev.filter((p) => p.id !== propToDelete.id));
   };
 
+  // ============================================================================
+  // RENDER
+  // ============================================================================
   return (
     <div className="container mt-4">
       {editMode ? (
@@ -177,13 +207,14 @@ function Profile() {
         />
       ) : (
         <>
-          {/* Only render ProfileDisplay if profile exists */}
           {profile && (
             <ProfileDisplay
               profile={profile}
               onEdit={() => setEditMode(true)}
+              onAvatarUpdate={handleAvatarUpdate}
             />
           )}
+
           <PasswordChange
             showForm={showPasswordForm}
             onToggle={() => setShowPasswordForm(!showPasswordForm)}

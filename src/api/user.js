@@ -76,3 +76,36 @@ export async function getUserById(token, userId) {
   }
   return data;
 }
+
+/**
+ * PATCH /users/{userId}/profile/image
+ * @param {string} token - Authorization token
+ * @param {number} userId - The user ID
+ * @param {File} imageFile - The image file to upload
+ * @return {Promise<Object>} {message, profile}
+ */
+export async function uploadProfileImage(token, userId, imageFile) {
+  const url = `${API_BASE}${API_PREFIX}/users/${userId}/profile/image`;
+  
+  const formData = new FormData();
+  formData.append("image", imageFile);
+
+  const response = await fetch(url, {
+    method: "PATCH",
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'User-Agent': 'client-web',
+      // Don't set Content-Type for FormData - browser will set it automatically with boundary
+    },
+    body: formData,
+  });
+
+  const data = await response.json();
+
+  console.log("Upload image response:", data);
+
+  if (!response.ok) {
+    throw new Error(data.error || response.statusText);
+  }
+  return data;
+}
