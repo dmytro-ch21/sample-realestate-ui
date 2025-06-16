@@ -27,12 +27,14 @@ function RootLayout() {
           </>
         ) : (
           <>
-            <NavButton to="/landing" text="Landing" />
             <NavButton to="/home" text="Listings" />
             <NavButton to="/wishlist" text="Wishlist" />
             <NavButton to="/profile" text="Profile" />
             {/* <NavButton to="/signup" text="Sign Up" /> */}
-            <button className="btn btn-sm btn-primary" onClick={handleLogOut}>
+            <button
+              className="btn btn-sm btn-primary ms-3"
+              onClick={handleLogOut}
+            >
               Log Out
             </button>
           </>

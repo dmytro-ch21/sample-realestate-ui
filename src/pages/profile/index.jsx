@@ -94,7 +94,7 @@ function Profile() {
     };
 
     fetchProfile();
-  }, [navigate]);
+  }, []);
 
   // ============================================================================
   // PROPERTY DATA SYNC
