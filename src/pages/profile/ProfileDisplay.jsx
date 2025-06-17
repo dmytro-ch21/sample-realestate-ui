@@ -20,7 +20,7 @@ function ProfileDisplay({ profile, onEdit, onAvatarUpdate }) {
   return (
     <>
       <div className="d-flex justify-content-between align-items-center">
-        <h2 className="my-3 fw-bold">Profile</h2>
+        <h2 className="my-3 fw-bold">Profile Page</h2>
         <div>
           <button className="btn btn-primary me-2" onClick={onEdit}>
             Edit Profile
@@ -40,6 +40,7 @@ function ProfileDisplay({ profile, onEdit, onAvatarUpdate }) {
                   style={{
                     width: "120px",
                     height: "120px",
+                    border: "2px solid black",
                     objectFit: "cover",
                     transition: "opacity 0.2s",
                   }}
