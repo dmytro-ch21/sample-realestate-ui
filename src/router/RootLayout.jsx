@@ -30,6 +30,7 @@ function RootLayout() {
             <NavButton to="/home" text="Listings" />
             <NavButton to="/wishlist" text="Wishlist" />
             <NavButton to="/profile" text="Profile" />
+            <NavButton to="/ai-search" text="AI Search" />
             {/* <NavButton to="/signup" text="Sign Up" /> */}
             <button
               className="btn btn-sm btn-primary ms-3"

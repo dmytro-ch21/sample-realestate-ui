@@ -9,6 +9,7 @@ import Profile from "../pages/profile/index.jsx";
 import Registration from "../pages/registration/Registration.jsx";
 import Login from "../pages/login/Login.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
+import AISearch from "../pages/aiSearch/AISearch.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +42,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/ai-search",
+        element: (
+          <ProtectedRoute>
+            <AISearch />
           </ProtectedRoute>
         ),
       },

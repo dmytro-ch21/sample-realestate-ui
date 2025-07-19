@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import { getListingById } from "../../api/listings";
+import AIChat from "../../components/AIChat";
 
 function Listing() {
   const { store, dispatch } = useGlobalStore();
@@ -181,6 +182,7 @@ function Listing() {
           </div>
         </div>
       </div>
+      <AIChat listingId={id} />
     </div>
   );
 }
